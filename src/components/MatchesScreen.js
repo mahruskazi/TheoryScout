@@ -274,6 +274,15 @@ class MatchesScreen extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.header_text}>Matches Screen</Text>
+          <View style={styles.qr_container}>
+            <Icon
+              iconStyle={styles.qr_icon}
+              name="md-qr-scanner"
+              type="ionicon"
+              color="white"
+              onPress={() => this.props.navigation.navigate('QrScanner')}
+            />
+          </View>
         </View>
         <ScrollView style={{flex: 1}}>
           <Accordion

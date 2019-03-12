@@ -20,11 +20,12 @@ import { Icon } from "native-base";
 import Orientation from "react-native-orientation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import WelcomeScreen from "./src/components/WelcomeScreen";
-import ScoutScreen from "./src/components/ScoutScreen";
 import MatchesScreen from "./src/components/MatchesScreen";
-import DataInputScreen from "./src/redux/containers/DataInputScreen.container";
 import SettingsScreen from "./src/redux/containers/SettingsScreen.container";
 import QrCodeGenerator from "./src/components/QrCodeGenerator";
+import TeamsList from "./src/components/TeamsList";
+import DataScreen from "./src/components/DataScreen";
+import QrCodeReader from "./src/redux/containers/QrCodeReader.container";
 
 export default class App extends React.Component {
   constructor() {
@@ -116,23 +117,30 @@ export default class App extends React.Component {
 
 const DashboardTabNavigator = createMaterialBottomTabNavigator(
   {
-    Scout: {
-      screen: ScoutScreen,
+    Teams: {
+      screen: TeamsList,
       navigationOptions: {
-        tabBarLabel: "SCOUT",
-        tabBarIcon: <Icon name="aperture" style={{ color: "white" }} />
+        tabBarLabel: "TEAMS",
+        tabBarIcon: <Icon name="list" style={{ color: "white", fontSize: 25 }} />
+      }
+    },
+    Data: {
+      screen: DataScreen,
+      navigationOptions: {
+        tabBarLabel: "DATA",
+        tabBarIcon: <Icon name="ios-desktop" style={{ color: "white", fontSize: 25 }} />
       }
     },
     Matches: {
       screen: MatchesScreen,
       navigationOptions: {
         tabBarLabel: "MATCHES",
-        tabBarIcon: <Icon name="eye" style={{ color: "white" }} />
+        tabBarIcon: <Icon name="eye" style={{ color: "white", fontSize: 25 }} />
       }
     }
   },
   {
-    initialRouteName: "Scout",
+    initialRouteName: "Teams",
     activeColor: "#f0edf6",
     inactiveColor: "#3e2465",
     shifting: true,
@@ -148,14 +156,11 @@ const DashboardStackNavigator = createStackNavigator(
         header: null
       }
     },
-    DataInput: {
-      screen: DataInputScreen,
-      navigationOptions: {
-        header: null
-      }
-    },
     QrScreen: {
       screen: QrCodeGenerator
+    },
+    QrScanner: {
+      screen: QrCodeReader
     }
   },
   {
@@ -181,7 +186,7 @@ const CustomDrawerContentComponent = props => (
           style={{ height: 100, width: 100 }}
           source={require("./src/assets/shadow_scout.png")}
         />
-        <Text style={{ color: "white" }}>Theory Scout Client</Text>
+        <Text style={{ color: "white" }}>Theory Scout</Text>
       </View>
       <DrawerItems {...props} />
     </SafeAreaView>

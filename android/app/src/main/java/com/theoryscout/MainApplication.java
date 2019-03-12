@@ -1,14 +1,15 @@
-package com.theoryscoutclient;
+package com.theoryscout;
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.reactnative.camera.RNCameraPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
+import com.github.yamill.orientation.OrientationPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
-import com.github.yamill.orientation.OrientationPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -29,12 +30,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new SvgPackage(),
-            new LinearGradientPackage(),
-            new RNSpinkitPackage(),
-            new OrientationPackage(),
+            new RNCameraPackage(),
             new VectorIconsPackage(),
-            new RNGestureHandlerPackage()
+            new SvgPackage(),
+            new OrientationPackage(),
+            new RNGestureHandlerPackage(),
+            new LinearGradientPackage(),
+            new RNSpinkitPackage()
       );
     }
 
