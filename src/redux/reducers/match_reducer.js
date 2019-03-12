@@ -17,6 +17,12 @@ export default function (state=initialState, action) {
             console.log("MATCH ADDED - Now at: " + matches.length)
             return {...state, matches}
         }
+        case 'REPLACE_ALL_MATCHES': {
+            matches = []
+            action.payload.map((match) => { matches.push(match)} ) // Copy over data to force update redux states
+            console.log("REPLACING ALL MATCHES")
+            return {...state, matches}
+        }
         case 'DELETE_MATCH': {
             //TODO: Add option to delete match
             return {...state, fetching: false, error: action.payload}

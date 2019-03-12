@@ -25,7 +25,7 @@ import SettingsScreen from "./src/redux/containers/SettingsScreen.container";
 import QrCodeGenerator from "./src/components/QrCodeGenerator";
 import TeamsList from "./src/components/TeamsList";
 import DataScreen from "./src/components/DataScreen";
-import QrCodeReader from "./src/components/QrCodeReader";
+import QrCodeReader from "./src/redux/containers/QrCodeReader.container";
 
 export default class App extends React.Component {
   constructor() {
