@@ -1,0 +1,103 @@
+{
+  "team_number": 1241,
+  "match_number": 5,
+  "alliance_color": "Red",
+  "scout_name": "Bob",
+  "starting_position": 2,
+  "starting_level": 1,
+  "auto": {
+    "hab_success": false,
+    "cargo_ship": {
+      "hatch": {
+        "scored": 0,
+        "missed": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      },
+      "cargo": {
+        "scored": 0,
+        "missed": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      }
+    },
+    "rocket_ship": {
+      "hatch": {
+        "scored_high": 0,
+        "scored_mid": 0,
+        "scored_low": 0,
+        "missed_high": 0,
+        "missed_mid": 0,
+        "missed_low": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      },
+      "cargo": {
+        "scored_high": 0,
+        "scored_mid": 0,
+        "scored_low": 0,
+        "missed_high": 0,
+        "missed_mid": 0,
+        "missed_low": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      }
+    }
+  },
+  "tele": {
+    "hab_success": false,
+    "cargo_ship": {
+      "hatch": {
+        "scored": 0,
+        "missed": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      },
+      "cargo": {
+        "scored": 0,
+        "missed": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      }
+    },
+    "rocket_ship": {
+      "hatch": {
+        "scored_high": 0,
+        "scored_mid": 0,
+        "scored_low": 0,
+        "missed_high": 0,
+        "missed_mid": 0,
+        "missed_low": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      },
+      "cargo": {
+        "scored_high": 0,
+        "scored_mid": 0,
+        "scored_low": 0,
+        "missed_high": 0,
+        "missed_mid": 0,
+        "missed_low": 0,
+        "accuracy": 0,
+        "cycle_times": [],
+        "average_cycle_time": 0
+      }
+    },
+    "floor_pickups": 0,
+    "times_defended": 0,
+    "played_defence": 0,
+    "times_died": 0,
+    "times_dropped": 0
+  },
+  "end": {
+    "climb_level": 0
+  },
+  "raw": match
+}

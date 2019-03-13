@@ -158,9 +158,6 @@ const DashboardStackNavigator = createStackNavigator(
     },
     QrScreen: {
       screen: QrCodeGenerator
-    },
-    QrScanner: {
-      screen: QrCodeReader
     }
   },
   {
@@ -200,6 +197,9 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     Settings: {
       screen: SettingsScreen
+    },  
+    Scan: {
+      screen: QrCodeReader
     }
   },
   {

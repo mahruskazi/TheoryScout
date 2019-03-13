@@ -144,7 +144,6 @@ class MatchesScreen extends Component {
         }
       }
     };
-    console.log("DATA: " + JSON.stringify(array))
     array.map(event => {
       if (event.l == constants.locations.CARGO_SHIP) {
         switch (event.a) {
