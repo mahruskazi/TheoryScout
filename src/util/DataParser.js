@@ -40,12 +40,13 @@ export function getTeamKeysForMatch(data, match_number, alliance_color) {
 
 export function extractMatchData(match) {
   obj = {
-    team_number: match.tn,
-    match_number: match.mn,
+    team_number: parseInt(match.tn),
+    match_number: parseInt(match.mn),
     alliance_color: match.c,
     scout_name: match.sn,
     starting_position: match.sp,
     starting_level: match.sl,
+    comments: match.e.c,
     auto: {
       hab_success: match.a.hs,
       cargo_ship: {},
@@ -61,7 +62,8 @@ export function extractMatchData(match) {
       times_dropped: 0
     },
     end: {
-      climb_level: 0
+      climb_levels: match.e.l,
+      time: match.e.t
     },
     raw: match
   };
@@ -129,32 +131,40 @@ export function extractMatchData(match) {
 
   stats = getStatsRS(obj.tele.rocket_ship.cargo);
   obj.tele.rocket_ship.cargo = merge(obj.tele.rocket_ship.cargo, stats);
-
+  console.log("Extracted match data successfully");
   return obj;
 }
 
 function getStatsCS(object) {
   game_object = {
-    accuracy: 0,
-    average_cycle_time: 0
+    accuracy: -1,
+    average_cycle_time: -1
   };
 
-  game_object.accuracy = getAverage(object.scored, object.missed);
-  game_object.average_cycle_time =
-    getSumOfArray(object.cycle_times) / parseFloat(object.cycle_times.length);
+  if (object.scored + object.missed != 0) {
+    game_object.accuracy = getAverage(object.scored, object.missed);
+  }
+  if (object.cycle_times.length != 0) {
+    game_object.average_cycle_time =
+      getSumOfArray(object.cycle_times) / parseFloat(object.cycle_times.length);
+  }
   return game_object;
 }
 
 function getStatsRS(object) {
   game_object = {
-    accuracy: 0,
-    average_cycle_time: 0
+    accuracy: -1,
+    average_cycle_time: -1
   };
   scored = object.scored_high + object.scored_mid + object.scored_low;
   missed = object.missed_high + object.missed_mid + object.missed_low;
-  game_object.accuracy = getAverage(scored, missed);
-  game_object.average_cycle_time =
-    getSumOfArray(object.cycle_times) / parseFloat(object.cycle_times.length);
+  if (scored != 0) {
+    game_object.accuracy = getAverage(scored, missed);
+  }
+  if (object.cycle_times.length != 0) {
+    game_object.average_cycle_time =
+      getSumOfArray(object.cycle_times) / parseFloat(object.cycle_times.length);
+  }
   return game_object;
 }
 

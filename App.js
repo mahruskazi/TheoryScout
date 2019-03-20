@@ -140,7 +140,7 @@ const DashboardTabNavigator = createMaterialBottomTabNavigator(
     }
   },
   {
-    initialRouteName: "Teams",
+    initialRouteName: "Matches",
     activeColor: "#f0edf6",
     inactiveColor: "#3e2465",
     shifting: true,

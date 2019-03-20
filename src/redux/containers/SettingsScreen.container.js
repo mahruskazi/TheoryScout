@@ -68,6 +68,20 @@ const mapDispatchToProps = dispatch => ({
   },
   deleteMatches: () => {
     dispatch({ type: "DELETE_ALL_MATCHES" });
+    dispatch({ type: "DELETE_ALL_TEAMS" });
+  },
+  loadTeams: data => {
+    matches = []
+    Object.values(data).forEach(value => {
+      //raw = value[1].raw
+      Object.values(value).forEach(v => {
+        //raw = value[1].raw
+        console.log("RAW: " + JSON.stringify(v))
+        matches.push(v.raw)
+      });
+    });
+    dispatch({ type: "REPLACE_ALL_MATCHES", payload: matches });
+    dispatch({ type: "REPLACE_ALL_TEAMS", payload: data });
   },
   setOrientation: state => {
     dispatch({ type: "SET_ORIENTATION", payload: state });

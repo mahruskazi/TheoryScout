@@ -39,8 +39,8 @@ class MatchesScreen extends Component {
   };
 
   _renderContent = section => {
-    auto_stats = this.getScoreStats(section.a.a);
-    tele_stats = this.getScoreStats(section.t.a);
+    auto_stats = this.getScoreStats(section.a);
+    tele_stats = this.getScoreStats(section.t);
     return (
       <View style={styles.content}>
         <Text>Starting Position: {this.getStartingPosition(section.sp)}</Text>
@@ -144,7 +144,10 @@ class MatchesScreen extends Component {
         }
       }
     };
-    array.map(event => {
+    if(array == undefined || array.a == undefined) {
+      return output;
+    }
+    array.a.map(event => {
       if (event.l == constants.locations.CARGO_SHIP) {
         switch (event.a) {
           case constants.actions.SHIP_SCORE_HATCH:

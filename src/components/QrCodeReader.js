@@ -17,7 +17,7 @@ class QrCodeReader extends Component {
   }
 
   async onSuccess(e) {
-    if (e.data.length < 10) {
+    if (e.data.length < 30) {
       console.log("NO GOOD");
       this.scanner.reactivate();
       this.setState({ text: "bad" });
@@ -30,8 +30,6 @@ class QrCodeReader extends Component {
   }
 
   async parseData(data) {
-    d = extractMatchData(data)
-    console.log("HELP: " + JSON.stringify(d))
     match_number = data.mn;
     team_number = parseInt(data.tn);
     console.log("Adding Match: " + match_number + " with Team: " + team_number);
@@ -80,6 +78,7 @@ class QrCodeReader extends Component {
     }
 
     this.props.updateMatches(matches);
+    this.props.updateTeamMatches(extractMatchData(data))
   }
 
   rescanButtonPress() {
