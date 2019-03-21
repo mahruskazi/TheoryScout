@@ -26,6 +26,7 @@ import QrCodeGenerator from "./src/components/QrCodeGenerator";
 import TeamsList from "./src/components/TeamsList";
 import DataScreen from "./src/components/DataScreen";
 import QrCodeReader from "./src/redux/containers/QrCodeReader.container";
+import MatchesModal from './src/components/MatchesModal'
 
 export default class App extends React.Component {
   constructor() {
@@ -124,7 +125,7 @@ const TeamPageStackNavigator = createMaterialTopTabNavigator(
       }
     },
     Matches: {
-      screen: DataScreen,
+      screen: MatchesModal,
       navigationOptions: {
         tabBarLabel: "Matches",
       }
@@ -149,15 +150,6 @@ const DashboardTabNavigator = createMaterialBottomTabNavigator(
         )
       }
     },
-    Data: {
-      screen: DataScreen,
-      navigationOptions: {
-        tabBarLabel: "DATA",
-        tabBarIcon: (
-          <Icon name="ios-desktop" style={{ color: "white", fontSize: 25 }} />
-        )
-      }
-    },
     Matches: {
       screen: MatchesScreen,
       navigationOptions: {
@@ -167,7 +159,7 @@ const DashboardTabNavigator = createMaterialBottomTabNavigator(
     }
   },
   {
-    initialRouteName: "Matches",
+    initialRouteName: "Teams",
     activeColor: "#f0edf6",
     inactiveColor: "#3e2465",
     shifting: true,
@@ -186,7 +178,7 @@ const DashboardStackNavigator = createStackNavigator(
     QrScreen: {
       screen: QrCodeGenerator,
       navigationOptions: {
-        title: 'QR Scanner',
+        title: 'QR Code',
         headerTintColor: 'white',
         headerStyle: {
           backgroundColor: '#292F6D',

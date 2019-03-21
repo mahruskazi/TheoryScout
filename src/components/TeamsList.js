@@ -12,22 +12,32 @@ class TeamsList extends Component {
 
   _renderBadge(team_number) {
     value = 0;
+    matches = [];
 
-    if(team_number in this.props.teams){
-      value = Object.keys(this.props.teams[team_number]).length;
-    }
+    this.props.matches.map(match => {
+      if(match.tn == team_number){
+        matches.push(match);
+      }
+    });
+    value = matches.length;
 
     return { value,  textStyle: { color: 'white' }, badgeStyle: { backgroundColor: '#404040', height: 30, width: 40, borderRadius: 15 } }
   }
 
   _onListItemPress(team_number) {
     data = null;
+    matches = [];
 
     if(team_number in this.props.teams){
       data = this.props.teams[team_number]
+      this.props.matches.map(match => {
+        if(match.tn == team_number){
+          matches.push(match);
+        }
+      });
     }
 
-    this.props.navigation.navigate('TeamPage', {data, team_number});
+    this.props.navigation.navigate('TeamPage', {data, team_number, matches});
   }
 
   render() {
@@ -63,7 +73,8 @@ class TeamsList extends Component {
 function mapStateToProps(state) {
   return {
     events: state.events,
-    teams: state.teams.teams
+    teams: state.teams.teams,
+    matches: state.matches.matches
   };
 }
 

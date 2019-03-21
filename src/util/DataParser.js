@@ -223,92 +223,94 @@ function extractData(actions, time_offset = 0) {
   start_cycle = false;
   time_start = time_offset;
   time_end = 0;
-  actions.map(action => {
-    if (action.a == constants.actions.PICKUP && !start_cycle) {
-      time_start = action.t;
-      start_cycle = true;
-    }
+  if (actions != undefined) {
+    actions.map(action => {
+      if (action.a == constants.actions.PICKUP && !start_cycle) {
+        time_start = action.t;
+        start_cycle = true;
+      }
 
-    // Cargo ship score/miss actions for hatch and cargo
-    switch (action.a) {
-      case constants.actions.SHIP_SCORE_HATCH:
-        time_end = action.t;
-        general.cargo_ship.hatch.cycle_times.push(time_end - time_start);
-        general.cargo_ship.hatch.scored++;
-        start_cycle = false;
-        break;
-      case constants.actions.SHIP_MISSED_HATCH:
-        general.cargo_ship.hatch.missed++;
-        break;
-      case constants.actions.SHIP_SCORE_CARGO:
-        time_end = action.t;
-        general.cargo_ship.cargo.cycle_times.push(time_end - time_start);
-        general.cargo_ship.cargo.scored++;
-        start_cycle = false;
-        break;
-      case constants.actions.SHIP_MISSED_CARGO:
-        general.cargo_ship.cargo.missed++;
-        break;
-    }
+      // Cargo ship score/miss actions for hatch and cargo
+      switch (action.a) {
+        case constants.actions.SHIP_SCORE_HATCH:
+          time_end = action.t;
+          general.cargo_ship.hatch.cycle_times.push(time_end - time_start);
+          general.cargo_ship.hatch.scored++;
+          start_cycle = false;
+          break;
+        case constants.actions.SHIP_MISSED_HATCH:
+          general.cargo_ship.hatch.missed++;
+          break;
+        case constants.actions.SHIP_SCORE_CARGO:
+          time_end = action.t;
+          general.cargo_ship.cargo.cycle_times.push(time_end - time_start);
+          general.cargo_ship.cargo.scored++;
+          start_cycle = false;
+          break;
+        case constants.actions.SHIP_MISSED_CARGO:
+          general.cargo_ship.cargo.missed++;
+          break;
+      }
 
-    // Rocket ship score/miss actions for hatch and cargo
-    switch (action.a) {
-      case constants.actions.ROCKET_SCORE_HATCH_HIGH:
-        time_end = action.t;
-        general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.hatch.scored_high++;
-        break;
-      case constants.actions.ROCKET_SCORE_HATCH_MID:
-        time_end = action.t;
-        general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.hatch.scored_mid++;
-        break;
-      case constants.actions.ROCKET_SCORE_HATCH_LOW:
-        time_end = action.t;
-        general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.hatch.scored_low++;
-        break;
-      case constants.actions.ROCKET_SCORE_CARGO_HIGH:
-        time_end = action.t;
-        general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.cargo.scored_high++;
-        break;
-      case constants.actions.ROCKET_SCORE_CARGO_MID:
-        time_end = action.t;
-        general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.cargo.scored_mid++;
-        break;
-      case constants.actions.ROCKET_SCORE_CARGO_LOW:
-        time_end = action.t;
-        general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
-        start_cycle = false;
-        general.rocket_ship.cargo.scored_low++;
-        break;
-      case constants.actions.ROCKET_MISSED_HATCH_HIGH:
-        general.rocket_ship.hatch.missed_high++;
-        break;
-      case constants.actions.ROCKET_MISSED_HATCH_MID:
-        general.rocket_ship.hatch.missed_mid++;
-        break;
-      case constants.actions.ROCKET_MISSED_HATCH_LOW:
-        general.rocket_ship.hatch.missed_low++;
-        break;
-      case constants.actions.ROCKET_MISSED_CARGO_HIGH:
-        general.rocket_ship.cargo.missed_high++;
-        break;
-      case constants.actions.ROCKET_MISSED_CARGO_MID:
-        general.rocket_ship.cargo.missed_mid++;
-        break;
-      case constants.actions.ROCKET_MISSED_CARGO_LOW:
-        general.rocket_ship.cargo.missed_low++;
-        break;
-    }
-  });
+      // Rocket ship score/miss actions for hatch and cargo
+      switch (action.a) {
+        case constants.actions.ROCKET_SCORE_HATCH_HIGH:
+          time_end = action.t;
+          general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.hatch.scored_high++;
+          break;
+        case constants.actions.ROCKET_SCORE_HATCH_MID:
+          time_end = action.t;
+          general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.hatch.scored_mid++;
+          break;
+        case constants.actions.ROCKET_SCORE_HATCH_LOW:
+          time_end = action.t;
+          general.rocket_ship.hatch.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.hatch.scored_low++;
+          break;
+        case constants.actions.ROCKET_SCORE_CARGO_HIGH:
+          time_end = action.t;
+          general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.cargo.scored_high++;
+          break;
+        case constants.actions.ROCKET_SCORE_CARGO_MID:
+          time_end = action.t;
+          general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.cargo.scored_mid++;
+          break;
+        case constants.actions.ROCKET_SCORE_CARGO_LOW:
+          time_end = action.t;
+          general.rocket_ship.cargo.cycle_times.push(time_end - time_start);
+          start_cycle = false;
+          general.rocket_ship.cargo.scored_low++;
+          break;
+        case constants.actions.ROCKET_MISSED_HATCH_HIGH:
+          general.rocket_ship.hatch.missed_high++;
+          break;
+        case constants.actions.ROCKET_MISSED_HATCH_MID:
+          general.rocket_ship.hatch.missed_mid++;
+          break;
+        case constants.actions.ROCKET_MISSED_HATCH_LOW:
+          general.rocket_ship.hatch.missed_low++;
+          break;
+        case constants.actions.ROCKET_MISSED_CARGO_HIGH:
+          general.rocket_ship.cargo.missed_high++;
+          break;
+        case constants.actions.ROCKET_MISSED_CARGO_MID:
+          general.rocket_ship.cargo.missed_mid++;
+          break;
+        case constants.actions.ROCKET_MISSED_CARGO_LOW:
+          general.rocket_ship.cargo.missed_low++;
+          break;
+      }
+    });
+  }
 
   return general;
 }
@@ -564,10 +566,8 @@ export function getTeamSummary(data) {
 
     // TELE
 
-    output.tele.total_hatch_average = 
-    summary.tele.total_hatch_scored / Object.keys(data).length;
-
-    console.log(JSON.stringify(summary));
+    output.tele.total_hatch_average =
+      summary.tele.total_hatch_scored / Object.keys(data).length;
 
     output.tele.total_cargo_average =
       summary.tele.total_cargo_scored / Object.keys(data).length;
@@ -602,14 +602,14 @@ export function getTeamSummary(data) {
 
     output.tele.cleanup = summary.tele.cleanup;
 
-    if(summary.tele.cycle_time_cs.length > 0){
+    if (summary.tele.cycle_time_cs.length > 0) {
       sum = getSumOfArray(summary.tele.cycle_time_cs);
-      output.tele.avg_cycle_time_cs = sum / summary.tele.cycle_time_cs.length; 
+      output.tele.avg_cycle_time_cs = sum / summary.tele.cycle_time_cs.length;
     }
 
-    if(summary.tele.cycle_time_rs.length > 0){
+    if (summary.tele.cycle_time_rs.length > 0) {
       sum = getSumOfArray(summary.tele.cycle_time_rs);
-      output.tele.avg_cycle_time_rs = sum / summary.tele.cycle_time_rs.length; 
+      output.tele.avg_cycle_time_rs = sum / summary.tele.cycle_time_rs.length;
     }
   }
   return output;
