@@ -76,7 +76,7 @@ const mapDispatchToProps = dispatch => ({
       //raw = value[1].raw
       Object.values(value).forEach(v => {
         //raw = value[1].raw
-        console.log("RAW: " + JSON.stringify(v))
+        //console.log("RAW: " + JSON.stringify(v))
         matches.push(v.raw)
       });
     });

@@ -169,7 +169,11 @@ function getStatsRS(object) {
 }
 
 function getAverage(scored, missed) {
-  return (1.0 * scored) / (scored + missed);
+  if (scored + missed != 0) {
+    return (1.0 * scored) / (scored + missed);
+  } else {
+    return 0;
+  }
 }
 
 // Pass in the actions for that match and the time_offset (tele offset by 15 seconds)
@@ -316,4 +320,297 @@ function getSumOfArray(array) {
     sum += num;
   });
   return sum;
+}
+
+function extractTeamSummary(data) {
+  obj = {
+    auto: {
+      level_1_success: 0,
+      level_1_missed: 0,
+      level_2_success: 0,
+      level_2_missed: 0,
+      cargo_ship: {
+        accuracy_cargo: [],
+        accuracy_hatch: []
+      },
+      rocket_ship: {
+        accuracy_cargo: [],
+        accuracy_hatch: []
+      }
+    },
+    tele: {
+      total_hatch_scored: 0,
+      total_hatch_missed: 0,
+      total_cargo_scored: 0,
+      total_cargo_missed: 0,
+      cargo_ship: {
+        cargo_scored: [],
+        hatch_scored: []
+      },
+      rocket_ship: {
+        cargo_scored: [],
+        hatch_scored: []
+      },
+      cleanup: 0,
+      cycle_time_cs: [],
+      cycle_time_rs: []
+    }
+  };
+
+  Object.keys(data)
+    .sort()
+    .forEach(match => {
+      //console.log(JSON.stringify(data[match]))
+      if (data[match].starting_level == 0) {
+        if (data[match].auto.hab_success == 0) {
+          obj.auto.level_1_success++;
+        } else {
+          obj.auto.level_1_missed++;
+        }
+      } else {
+        if (data[match].auto.hab_success == 0) {
+          obj.auto.level_2_success++;
+        } else {
+          obj.auto.level_2_missed++;
+        }
+      }
+
+      if (data[match].auto.cargo_ship.cargo.accuracy != -1) {
+        obj.auto.cargo_ship.accuracy_cargo.push(
+          data[match].auto.cargo_ship.cargo.accuracy
+        );
+      }
+      if (data[match].auto.cargo_ship.hatch.accuracy != -1) {
+        obj.auto.cargo_ship.accuracy_hatch.push(
+          data[match].auto.cargo_ship.hatch.accuracy
+        );
+      }
+
+      t = {
+        low: getAverage(
+          data[match].auto.rocket_ship.cargo.scored_low,
+          data[match].auto.rocket_ship.cargo.missed_low
+        ),
+        mid: getAverage(
+          data[match].auto.rocket_ship.cargo.scored_mid,
+          data[match].auto.rocket_ship.cargo.missed_mid
+        ),
+        high: getAverage(
+          data[match].auto.rocket_ship.cargo.scored_high,
+          data[match].auto.rocket_ship.cargo.missed_high
+        )
+      };
+      text = `(${t.low}, ${t.mid}, ${t.high})`;
+      obj.auto.rocket_ship.accuracy_cargo.push(text);
+      t = {
+        low: getAverage(
+          data[match].auto.rocket_ship.hatch.scored_low,
+          data[match].auto.rocket_ship.hatch.missed_low
+        ),
+        mid: getAverage(
+          data[match].auto.rocket_ship.hatch.scored_mid,
+          data[match].auto.rocket_ship.hatch.missed_mid
+        ),
+        high: getAverage(
+          data[match].auto.rocket_ship.hatch.scored_high,
+          data[match].auto.rocket_ship.hatch.missed_high
+        )
+      };
+      text = `(${t.low}, ${t.mid}, ${t.high})`;
+      obj.auto.rocket_ship.accuracy_hatch.push(text);
+
+      obj.tele.total_cargo_scored +=
+        data[match].tele.cargo_ship.cargo.scored +
+        data[match].tele.rocket_ship.cargo.scored_high +
+        data[match].tele.rocket_ship.cargo.scored_mid +
+        data[match].tele.rocket_ship.cargo.scored_low;
+
+      obj.tele.total_cargo_missed +=
+        data[match].tele.cargo_ship.cargo.missed +
+        data[match].tele.rocket_ship.cargo.missed_high +
+        data[match].tele.rocket_ship.cargo.missed_mid +
+        data[match].tele.rocket_ship.cargo.missed_low;
+
+      obj.tele.total_hatch_scored +=
+        data[match].tele.cargo_ship.hatch.scored +
+        data[match].tele.rocket_ship.hatch.scored_high +
+        data[match].tele.rocket_ship.hatch.scored_mid +
+        data[match].tele.rocket_ship.hatch.scored_low;
+
+      obj.tele.total_hatch_missed +=
+        data[match].tele.cargo_ship.hatch.missed +
+        data[match].tele.rocket_ship.hatch.missed_high +
+        data[match].tele.rocket_ship.hatch.missed_mid +
+        data[match].tele.rocket_ship.hatch.missed_low;
+
+      obj.tele.cargo_ship.cargo_scored.push(
+        data[match].tele.cargo_ship.cargo.scored
+      );
+      obj.tele.cargo_ship.hatch_scored.push(
+        data[match].tele.cargo_ship.hatch.scored
+      );
+
+      t = {
+        low: data[match].tele.rocket_ship.cargo.scored_low,
+        mid: data[match].tele.rocket_ship.cargo.scored_mid,
+        high: data[match].tele.rocket_ship.cargo.scored_high
+      };
+
+      text = `(${t.low}, ${t.mid}, ${t.high})`;
+      obj.tele.rocket_ship.cargo_scored.push(text);
+
+      t = {
+        low: data[match].tele.rocket_ship.hatch.scored_low,
+        mid: data[match].tele.rocket_ship.hatch.scored_mid,
+        high: data[match].tele.rocket_ship.hatch.scored_high
+      };
+
+      text = `(${t.low}, ${t.mid}, ${t.high})`;
+      obj.tele.rocket_ship.hatch_scored.push(text);
+
+      obj.tele.cleanup += data[match].tele.floor_pickups;
+
+      if (data[match].tele.cargo_ship.cargo.average_cycle_time != -1) {
+        obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
+          data[match].tele.cargo_ship.cargo.cycle_times
+        );
+      }
+      if (data[match].tele.cargo_ship.hatch.average_cycle_time != -1) {
+        obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
+          data[match].tele.cargo_ship.hatch.cycle_times
+        );
+      }
+
+      if (data[match].tele.rocket_ship.cargo.average_cycle_time != -1) {
+        obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
+          data[match].tele.rocket_ship.cargo.cycle_times
+        );
+      }
+      if (data[match].tele.rocket_ship.hatch.average_cycle_time != -1) {
+        obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
+          data[match].tele.rocket_ship.hatch.cycle_times
+        );
+      }
+    });
+
+  return obj;
+}
+
+export function getTeamSummary(data) {
+  output = {
+    auto: {
+      level_1: "N/A",
+      level_2: "N/A",
+      cargo_ship: {
+        accuracy_cargo: "N/A",
+        accuracy_hatch: "N/A"
+      },
+      rocket_ship: {
+        accuracy_cargo: "N/A",
+        accuracy_hatch: "N/A"
+      }
+    },
+    tele: {
+      total_hatch_average: -1,
+      total_cargo_average: -1,
+      cargo_ship: {
+        cargo_scored: "N/A",
+        hatch_scored: "N/A"
+      },
+      rocket_ship: {
+        cargo_scored: "N/A",
+        hatch_scored: "N/A"
+      },
+      cleanup: "N/A",
+      avg_cycle_time_cs: -1,
+      avg_cycle_time_rs: -1
+    }
+  };
+  if (data != null && Object.keys(data).length > 0) {
+    summary = extractTeamSummary(data);
+
+    output.auto.level_1 = `${summary.auto.level_1_success}/${summary.auto
+      .level_1_success + summary.auto.level_1_missed}`;
+    output.auto.level_2 = `${summary.auto.level_2_success}/${summary.auto
+      .level_2_success + summary.auto.level_2_missed}`;
+
+    if (summary.auto.cargo_ship.accuracy_hatch.length > 0) {
+      last_three = summary.auto.cargo_ship.accuracy_hatch.slice(
+        Math.max(summary.auto.cargo_ship.accuracy_hatch.length - 3, 0)
+      );
+      output.auto.cargo_ship.accuracy_hatch = JSON.stringify(last_three);
+    }
+
+    if (summary.auto.cargo_ship.accuracy_cargo.length > 0) {
+      last_three = summary.auto.cargo_ship.accuracy_cargo.slice(
+        Math.max(summary.auto.cargo_ship.accuracy_cargo.length - 3, 0)
+      );
+      output.auto.cargo_ship.accuracy_cargo = JSON.stringify(last_three);
+    }
+
+    if (summary.auto.rocket_ship.accuracy_hatch.length > 0) {
+      last_three = summary.auto.rocket_ship.accuracy_hatch.slice(
+        Math.max(summary.auto.rocket_ship.accuracy_hatch.length - 3, 0)
+      );
+      output.auto.rocket_ship.accuracy_hatch = JSON.stringify(last_three);
+    }
+
+    if (summary.auto.rocket_ship.accuracy_cargo.length > 0) {
+      last_three = summary.auto.rocket_ship.accuracy_cargo.slice(
+        Math.max(summary.auto.rocket_ship.accuracy_cargo.length - 3, 0)
+      );
+      output.auto.rocket_ship.accuracy_cargo = JSON.stringify(last_three);
+    }
+
+    // TELE
+
+    output.tele.total_hatch_average = 
+    summary.tele.total_hatch_scored / Object.keys(data).length;
+
+    console.log(JSON.stringify(summary));
+
+    output.tele.total_cargo_average =
+      summary.tele.total_cargo_scored / Object.keys(data).length;
+
+    if (summary.tele.cargo_ship.hatch_scored.length > 0) {
+      last_three = summary.tele.cargo_ship.hatch_scored.slice(
+        Math.max(summary.tele.cargo_ship.hatch_scored.length - 3, 0)
+      );
+      output.tele.cargo_ship.hatch_scored = JSON.stringify(last_three);
+    }
+
+    if (summary.tele.cargo_ship.cargo_scored.length > 0) {
+      last_three = summary.tele.cargo_ship.cargo_scored.slice(
+        Math.max(summary.tele.cargo_ship.cargo_scored.length - 3, 0)
+      );
+      output.tele.cargo_ship.cargo_scored = JSON.stringify(last_three);
+    }
+
+    if (summary.tele.rocket_ship.hatch_scored.length > 0) {
+      last_three = summary.tele.rocket_ship.hatch_scored.slice(
+        Math.max(summary.tele.rocket_ship.hatch_scored.length - 3, 0)
+      );
+      output.tele.rocket_ship.hatch_scored = JSON.stringify(last_three);
+    }
+
+    if (summary.tele.rocket_ship.cargo_scored.length > 0) {
+      last_three = summary.tele.rocket_ship.cargo_scored.slice(
+        Math.max(summary.tele.rocket_ship.cargo_scored.length - 3, 0)
+      );
+      output.tele.rocket_ship.cargo_scored = JSON.stringify(last_three);
+    }
+
+    output.tele.cleanup = summary.tele.cleanup;
+
+    if(summary.tele.cycle_time_cs.length > 0){
+      sum = getSumOfArray(summary.tele.cycle_time_cs);
+      output.tele.avg_cycle_time_cs = sum / summary.tele.cycle_time_cs.length; 
+    }
+
+    if(summary.tele.cycle_time_rs.length > 0){
+      sum = getSumOfArray(summary.tele.cycle_time_rs);
+      output.tele.avg_cycle_time_rs = sum / summary.tele.cycle_time_rs.length; 
+    }
+  }
+  return output;
 }
