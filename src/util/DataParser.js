@@ -356,13 +356,15 @@ function extractTeamSummary(data) {
       cleanup: 0,
       cycle_time_cs: [],
       cycle_time_rs: []
-    }
+    },
+    end: []
   };
 
   Object.keys(data)
-    .sort()
+    .sort(function(a, b) {
+      return a - b;
+    })
     .forEach(match => {
-      //console.log(JSON.stringify(data[match]))
       if (data[match].starting_level == 0) {
         if (data[match].auto.hab_success == 0) {
           obj.auto.level_1_success++;
@@ -493,6 +495,15 @@ function extractTeamSummary(data) {
           data[match].tele.rocket_ship.hatch.cycle_times
         );
       }
+
+      if (
+        data[match].end.climb_levels != undefined &&
+        data[match].end.climb_levels.length > 0
+      ) {
+        obj.end.push(data[match].end.climb_levels);
+      } else {
+        obj.end.push(["N/A"]);
+      }
     });
 
   return obj;
@@ -526,7 +537,8 @@ export function getTeamSummary(data) {
       cleanup: "N/A",
       avg_cycle_time_cs: -1,
       avg_cycle_time_rs: -1
-    }
+    },
+    end: []
   };
   if (data != null && Object.keys(data).length > 0) {
     summary = extractTeamSummary(data);
@@ -611,6 +623,8 @@ export function getTeamSummary(data) {
       sum = getSumOfArray(summary.tele.cycle_time_rs);
       output.tele.avg_cycle_time_rs = sum / summary.tele.cycle_time_rs.length;
     }
+
+    output.end = summary.end;
   }
   return output;
 }

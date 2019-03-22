@@ -82,6 +82,10 @@ export default class DataScreen extends Component {
           {"Average cycle time rocket ship: "}
           <Text style={styles.item_text}>{summary.tele.avg_cycle_time_rs.toFixed(2)}</Text>
         </Text>
+        <Text style={styles.item_header}>
+          {"Climb levels: "}
+          <Text style={styles.item_text}>{JSON.stringify(summary.end)}</Text>
+        </Text>
       </View>
     );
   }
