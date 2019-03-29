@@ -333,11 +333,15 @@ function extractTeamSummary(data) {
       level_2_missed: 0,
       cargo_ship: {
         accuracy_cargo: [],
-        accuracy_hatch: []
+        accuracy_hatch: [],
+        cargo_scored: [],
+        hatch_scored: []
       },
       rocket_ship: {
         accuracy_cargo: [],
-        accuracy_hatch: []
+        accuracy_hatch: [],
+        cargo_scored: [],
+        hatch_scored: []
       }
     },
     tele: {
@@ -360,151 +364,184 @@ function extractTeamSummary(data) {
     end: []
   };
 
-  Object.keys(data)
-    .sort(function(a, b) {
-      return a - b;
-    })
-    .forEach(match => {
-      if (data[match].starting_level == 0) {
-        if (data[match].auto.hab_success == 0) {
-          obj.auto.level_1_success++;
+  if (data != undefined) {
+    Object.keys(data)
+      .sort(function(a, b) {
+        return a - b;
+      })
+      .forEach(match => {
+        if (data[match].starting_level == 0) {
+          if (data[match].auto.hab_success == 0) {
+            obj.auto.level_1_success++;
+          } else {
+            obj.auto.level_1_missed++;
+          }
         } else {
-          obj.auto.level_1_missed++;
+          if (data[match].auto.hab_success == 0) {
+            obj.auto.level_2_success++;
+          } else {
+            obj.auto.level_2_missed++;
+          }
         }
-      } else {
-        if (data[match].auto.hab_success == 0) {
-          obj.auto.level_2_success++;
+
+        if (data[match].auto.cargo_ship.cargo.accuracy != -1) {
+          obj.auto.cargo_ship.accuracy_cargo.push(
+            data[match].auto.cargo_ship.cargo.accuracy
+          );
+
+          obj.auto.cargo_ship.cargo_scored.push(
+            data[match].auto.cargo_ship.cargo.scored
+          );
+        }
+        if (data[match].auto.cargo_ship.hatch.accuracy != -1) {
+          obj.auto.cargo_ship.accuracy_hatch.push(
+            data[match].auto.cargo_ship.hatch.accuracy
+          );
+          obj.auto.cargo_ship.hatch_scored.push(
+            data[match].auto.cargo_ship.hatch.scored
+          );
+        }
+
+        t = {
+          low: getAverage(
+            data[match].auto.rocket_ship.cargo.scored_low,
+            data[match].auto.rocket_ship.cargo.missed_low
+          ),
+          mid: getAverage(
+            data[match].auto.rocket_ship.cargo.scored_mid,
+            data[match].auto.rocket_ship.cargo.missed_mid
+          ),
+          high: getAverage(
+            data[match].auto.rocket_ship.cargo.scored_high,
+            data[match].auto.rocket_ship.cargo.missed_high
+          )
+        };
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.auto.rocket_ship.accuracy_cargo.push(arr);
+        t = {
+          low: getAverage(
+            data[match].auto.rocket_ship.hatch.scored_low,
+            data[match].auto.rocket_ship.hatch.missed_low
+          ),
+          mid: getAverage(
+            data[match].auto.rocket_ship.hatch.scored_mid,
+            data[match].auto.rocket_ship.hatch.missed_mid
+          ),
+          high: getAverage(
+            data[match].auto.rocket_ship.hatch.scored_high,
+            data[match].auto.rocket_ship.hatch.missed_high
+          )
+        };
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.auto.rocket_ship.accuracy_hatch.push(arr);
+
+        t = {
+          low: data[match].auto.rocket_ship.cargo.scored_low,
+          mid: data[match].auto.rocket_ship.cargo.scored_mid,
+          high: data[match].auto.rocket_ship.cargo.scored_high
+        };
+
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.auto.rocket_ship.cargo_scored.push(arr);
+
+        t = {
+          low: data[match].auto.rocket_ship.hatch.scored_low,
+          mid: data[match].auto.rocket_ship.hatch.scored_mid,
+          high: data[match].auto.rocket_ship.hatch.scored_high
+        };
+
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.auto.rocket_ship.hatch_scored.push(arr);
+
+        obj.tele.total_cargo_scored +=
+          data[match].tele.cargo_ship.cargo.scored +
+          data[match].tele.rocket_ship.cargo.scored_high +
+          data[match].tele.rocket_ship.cargo.scored_mid +
+          data[match].tele.rocket_ship.cargo.scored_low;
+
+        obj.tele.total_cargo_missed +=
+          data[match].tele.cargo_ship.cargo.missed +
+          data[match].tele.rocket_ship.cargo.missed_high +
+          data[match].tele.rocket_ship.cargo.missed_mid +
+          data[match].tele.rocket_ship.cargo.missed_low;
+
+        obj.tele.total_hatch_scored +=
+          data[match].tele.cargo_ship.hatch.scored +
+          data[match].tele.rocket_ship.hatch.scored_high +
+          data[match].tele.rocket_ship.hatch.scored_mid +
+          data[match].tele.rocket_ship.hatch.scored_low;
+
+        obj.tele.total_hatch_missed +=
+          data[match].tele.cargo_ship.hatch.missed +
+          data[match].tele.rocket_ship.hatch.missed_high +
+          data[match].tele.rocket_ship.hatch.missed_mid +
+          data[match].tele.rocket_ship.hatch.missed_low;
+
+        obj.tele.cargo_ship.cargo_scored.push(
+          data[match].tele.cargo_ship.cargo.scored
+        );
+        obj.tele.cargo_ship.hatch_scored.push(
+          data[match].tele.cargo_ship.hatch.scored
+        );
+
+        t = {
+          low: data[match].tele.rocket_ship.cargo.scored_low,
+          mid: data[match].tele.rocket_ship.cargo.scored_mid,
+          high: data[match].tele.rocket_ship.cargo.scored_high
+        };
+
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.tele.rocket_ship.cargo_scored.push(arr);
+
+        t = {
+          low: data[match].tele.rocket_ship.hatch.scored_low,
+          mid: data[match].tele.rocket_ship.hatch.scored_mid,
+          high: data[match].tele.rocket_ship.hatch.scored_high
+        };
+
+        //text = `(${t.low}, ${t.mid}, ${t.high})`;
+        arr = [t.low, t.mid, t.high];
+        obj.tele.rocket_ship.hatch_scored.push(arr);
+
+        obj.tele.cleanup += data[match].tele.floor_pickups;
+
+        if (data[match].tele.cargo_ship.cargo.average_cycle_time != -1) {
+          obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
+            data[match].tele.cargo_ship.cargo.cycle_times
+          );
+        }
+        if (data[match].tele.cargo_ship.hatch.average_cycle_time != -1) {
+          obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
+            data[match].tele.cargo_ship.hatch.cycle_times
+          );
+        }
+
+        if (data[match].tele.rocket_ship.cargo.average_cycle_time != -1) {
+          obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
+            data[match].tele.rocket_ship.cargo.cycle_times
+          );
+        }
+        if (data[match].tele.rocket_ship.hatch.average_cycle_time != -1) {
+          obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
+            data[match].tele.rocket_ship.hatch.cycle_times
+          );
+        }
+
+        if (
+          data[match].end.climb_levels != undefined &&
+          data[match].end.climb_levels.length > 0
+        ) {
+          obj.end.push(data[match].end.climb_levels);
         } else {
-          obj.auto.level_2_missed++;
+          obj.end.push(["N/A"]);
         }
-      }
-
-      if (data[match].auto.cargo_ship.cargo.accuracy != -1) {
-        obj.auto.cargo_ship.accuracy_cargo.push(
-          data[match].auto.cargo_ship.cargo.accuracy
-        );
-      }
-      if (data[match].auto.cargo_ship.hatch.accuracy != -1) {
-        obj.auto.cargo_ship.accuracy_hatch.push(
-          data[match].auto.cargo_ship.hatch.accuracy
-        );
-      }
-
-      t = {
-        low: getAverage(
-          data[match].auto.rocket_ship.cargo.scored_low,
-          data[match].auto.rocket_ship.cargo.missed_low
-        ),
-        mid: getAverage(
-          data[match].auto.rocket_ship.cargo.scored_mid,
-          data[match].auto.rocket_ship.cargo.missed_mid
-        ),
-        high: getAverage(
-          data[match].auto.rocket_ship.cargo.scored_high,
-          data[match].auto.rocket_ship.cargo.missed_high
-        )
-      };
-      text = `(${t.low}, ${t.mid}, ${t.high})`;
-      obj.auto.rocket_ship.accuracy_cargo.push(text);
-      t = {
-        low: getAverage(
-          data[match].auto.rocket_ship.hatch.scored_low,
-          data[match].auto.rocket_ship.hatch.missed_low
-        ),
-        mid: getAverage(
-          data[match].auto.rocket_ship.hatch.scored_mid,
-          data[match].auto.rocket_ship.hatch.missed_mid
-        ),
-        high: getAverage(
-          data[match].auto.rocket_ship.hatch.scored_high,
-          data[match].auto.rocket_ship.hatch.missed_high
-        )
-      };
-      text = `(${t.low}, ${t.mid}, ${t.high})`;
-      obj.auto.rocket_ship.accuracy_hatch.push(text);
-
-      obj.tele.total_cargo_scored +=
-        data[match].tele.cargo_ship.cargo.scored +
-        data[match].tele.rocket_ship.cargo.scored_high +
-        data[match].tele.rocket_ship.cargo.scored_mid +
-        data[match].tele.rocket_ship.cargo.scored_low;
-
-      obj.tele.total_cargo_missed +=
-        data[match].tele.cargo_ship.cargo.missed +
-        data[match].tele.rocket_ship.cargo.missed_high +
-        data[match].tele.rocket_ship.cargo.missed_mid +
-        data[match].tele.rocket_ship.cargo.missed_low;
-
-      obj.tele.total_hatch_scored +=
-        data[match].tele.cargo_ship.hatch.scored +
-        data[match].tele.rocket_ship.hatch.scored_high +
-        data[match].tele.rocket_ship.hatch.scored_mid +
-        data[match].tele.rocket_ship.hatch.scored_low;
-
-      obj.tele.total_hatch_missed +=
-        data[match].tele.cargo_ship.hatch.missed +
-        data[match].tele.rocket_ship.hatch.missed_high +
-        data[match].tele.rocket_ship.hatch.missed_mid +
-        data[match].tele.rocket_ship.hatch.missed_low;
-
-      obj.tele.cargo_ship.cargo_scored.push(
-        data[match].tele.cargo_ship.cargo.scored
-      );
-      obj.tele.cargo_ship.hatch_scored.push(
-        data[match].tele.cargo_ship.hatch.scored
-      );
-
-      t = {
-        low: data[match].tele.rocket_ship.cargo.scored_low,
-        mid: data[match].tele.rocket_ship.cargo.scored_mid,
-        high: data[match].tele.rocket_ship.cargo.scored_high
-      };
-
-      text = `(${t.low}, ${t.mid}, ${t.high})`;
-      obj.tele.rocket_ship.cargo_scored.push(text);
-
-      t = {
-        low: data[match].tele.rocket_ship.hatch.scored_low,
-        mid: data[match].tele.rocket_ship.hatch.scored_mid,
-        high: data[match].tele.rocket_ship.hatch.scored_high
-      };
-
-      text = `(${t.low}, ${t.mid}, ${t.high})`;
-      obj.tele.rocket_ship.hatch_scored.push(text);
-
-      obj.tele.cleanup += data[match].tele.floor_pickups;
-
-      if (data[match].tele.cargo_ship.cargo.average_cycle_time != -1) {
-        obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
-          data[match].tele.cargo_ship.cargo.cycle_times
-        );
-      }
-      if (data[match].tele.cargo_ship.hatch.average_cycle_time != -1) {
-        obj.tele.cycle_time_cs = obj.tele.cycle_time_cs.concat(
-          data[match].tele.cargo_ship.hatch.cycle_times
-        );
-      }
-
-      if (data[match].tele.rocket_ship.cargo.average_cycle_time != -1) {
-        obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
-          data[match].tele.rocket_ship.cargo.cycle_times
-        );
-      }
-      if (data[match].tele.rocket_ship.hatch.average_cycle_time != -1) {
-        obj.tele.cycle_time_rs = obj.tele.cycle_time_rs.concat(
-          data[match].tele.rocket_ship.hatch.cycle_times
-        );
-      }
-
-      if (
-        data[match].end.climb_levels != undefined &&
-        data[match].end.climb_levels.length > 0
-      ) {
-        obj.end.push(data[match].end.climb_levels);
-      } else {
-        obj.end.push(["N/A"]);
-      }
-    });
+      });
+  }
 
   return obj;
 }
@@ -627,4 +664,189 @@ export function getTeamSummary(data) {
     output.end = summary.end;
   }
   return output;
+}
+
+export function getComparisonData(event_data, teams) {
+  output = {
+    auto: {
+      level_1: [],
+      level_2: [],
+      cargo_ship: {
+        hatch_average: [],
+        cargo_average: []
+      },
+      rocket_ship: {
+        hatch_average: [],
+        cargo_average: []
+      }
+    },
+    tele: {
+      total_hatch_average: [],
+      total_cargo_average: [],
+      cargo_ship: {
+        hatch_average: [],
+        cargo_average: []
+      },
+      rocket_ship: {
+        hatch_average: [],
+        cargo_average: []
+      }
+    }
+  };
+
+  for (var i = 0; i < 6; i++) {
+    team = null;
+    if (teams[i] in event_data) team = event_data[teams[i]];
+    team_data = extractTeamSummary(team);
+
+    // Level 1
+    output.auto.level_1.push(
+      `${team_data.auto.level_1_success}/${team_data.auto.level_1_success +
+        team_data.auto.level_1_missed}`
+    );
+
+    // Level 2
+    output.auto.level_2.push(
+      `${team_data.auto.level_2_success}/${team_data.auto.level_2_success +
+        team_data.auto.level_2_missed}`
+    );
+
+    if (team != null) {
+      sum = getSumOfArray(team_data.auto.cargo_ship.hatch_scored);
+      output.auto.cargo_ship.hatch_average.push(sum / Object.keys(team).length);
+    } else {
+      output.auto.cargo_ship.hatch_average.push("N/A");
+    }
+
+    if (team != null) {
+      sum = getSumOfArray(team_data.auto.cargo_ship.cargo_scored);
+      output.auto.cargo_ship.cargo_average.push(sum / Object.keys(team).length);
+    } else {
+      output.auto.cargo_ship.cargo_average.push("N/A");
+    }
+
+    if (team != null) {
+      obj = getRocketShipStats(team_data.auto.rocket_ship.hatch_scored);
+      avg = {
+        low: 0,
+        mid: 0,
+        high: 0
+      };
+      avg.low = obj.low / Object.keys(team).length;
+      avg.mid = obj.mid / Object.keys(team).length;
+      avg.high = obj.high / Object.keys(team).length;
+      text = `${avg.low}/${avg.mid}/${avg.high}`;
+      output.auto.rocket_ship.hatch_average.push(text);
+    } else {
+      output.auto.rocket_ship.hatch_average.push("N/A");
+    }
+
+    if (team != null) {
+      obj = getRocketShipStats(team_data.auto.rocket_ship.cargo_scored);
+      avg = {
+        low: 0,
+        mid: 0,
+        high: 0
+      };
+      avg.low = obj.low / Object.keys(team).length;
+      avg.mid = obj.mid / Object.keys(team).length;
+      avg.high = obj.high / Object.keys(team).length;
+      text = `${avg.low}/${avg.mid}/${avg.high}`;
+      output.auto.rocket_ship.cargo_average.push(text);
+    } else {
+      output.auto.rocket_ship.cargo_average.push("N/A");
+    }
+  }
+
+  for (var i = 0; i < 6; i++) {
+    team = null;
+    if (teams[i] in event_data) team = event_data[teams[i]];
+    team_data = extractTeamSummary(team);
+
+    if (team != null) {
+      output.tele.total_hatch_average.push(
+        team_data.tele.total_hatch_scored / Object.keys(team).length);
+    } else {
+      output.tele.total_hatch_average.push("N/A");
+    }
+
+    if (team != null) {
+      output.tele.total_cargo_average.push(
+        team_data.tele.total_cargo_scored / Object.keys(team).length);
+    } else {
+      output.tele.total_cargo_average.push("N/A");
+    }
+
+    if (team != null) {
+      sum = getSumOfArray(team_data.tele.cargo_ship.hatch_scored);
+      output.tele.cargo_ship.hatch_average.push(sum / Object.keys(team).length);
+    } else {
+      output.tele.cargo_ship.hatch_average.push("N/A");
+    }
+
+    if (team != null) {
+      sum = getSumOfArray(team_data.tele.cargo_ship.cargo_scored);
+      output.tele.cargo_ship.cargo_average.push(sum / Object.keys(team).length);
+    } else {
+      output.tele.cargo_ship.cargo_average.push("N/A");
+    }
+
+    if (team != null) {
+      obj = getRocketShipStats(team_data.tele.rocket_ship.hatch_scored);
+      avg = {
+        low: 0,
+        mid: 0,
+        high: 0
+      };
+      avg.low = obj.low / Object.keys(team).length;
+      avg.mid = obj.mid / Object.keys(team).length;
+      avg.high = obj.high / Object.keys(team).length;
+      text = `${avg.low}/${avg.mid}/${avg.high}`;
+      output.tele.rocket_ship.hatch_average.push(text);
+    } else {
+      output.tele.rocket_ship.hatch_average.push("N/A");
+    }
+
+    if (team != null) {
+      obj = getRocketShipStats(team_data.tele.rocket_ship.cargo_scored);
+      avg = {
+        low: 0,
+        mid: 0,
+        high: 0
+      };
+      avg.low = obj.low / Object.keys(team).length;
+      avg.mid = obj.mid / Object.keys(team).length;
+      avg.high = obj.high / Object.keys(team).length;
+      text = `${avg.low}/${avg.mid}/${avg.high}`;
+      output.tele.rocket_ship.cargo_average.push(text);
+    } else {
+      output.tele.rocket_ship.cargo_average.push("N/A");
+    }
+  }
+
+  // {
+  //   sum = getSumOfArray(team_1_data.auto.cargo_ship.hatch_scored);
+  //   output.auto.cargo_ship.hatch_average(sum / Object.keys())
+  // }
+
+  console.log(JSON.stringify(output));
+
+  return output;
+}
+
+// Gets the Low/Mid/High totals from all matches
+function getRocketShipStats(data) {
+  obj = {
+    low: 0,
+    mid: 0,
+    high: 0
+  };
+
+  data.map(object => {
+    obj.low += object[0];
+    obj.mid += object[1];
+    obj.high += object[2];
+  });
+  console.log("ROCKET: " + JSON.stringify(obj));
+  return obj;
 }

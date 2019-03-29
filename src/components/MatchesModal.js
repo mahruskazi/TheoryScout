@@ -62,7 +62,8 @@ export default class MatchesModal extends Component {
         <Text>Left Rocket Cargo Scored (L/M/H): {this.getLRCargoStats(tele_stats)}</Text>
         <Text style={{ fontWeight: "bold" }}>End Game</Text>
         <Text>Level order: {JSON.stringify(section.e.l)}</Text>
-        <Text>Comments: {section.e.c}</Text>
+        <Text>Comments:</Text>
+        <Text style={{paddingStart: 5, paddingEnd: 5}}>{section.e.c}</Text>
       </View>
     );
   };

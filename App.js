@@ -27,6 +27,7 @@ import TeamsList from "./src/components/TeamsList";
 import DataScreen from "./src/components/DataScreen";
 import QrCodeReader from "./src/redux/containers/QrCodeReader.container";
 import MatchesModal from './src/components/MatchesModal'
+import TeamCompare from "./src/components/TeamCompare";
 
 export default class App extends React.Component {
   constructor() {
@@ -147,6 +148,15 @@ const DashboardTabNavigator = createMaterialBottomTabNavigator(
         tabBarLabel: "TEAMS",
         tabBarIcon: (
           <Icon name="list" style={{ color: "white", fontSize: 25 }} />
+        )
+      }
+    },
+    Summary: {
+      screen: TeamCompare,
+      navigationOptions: {
+        tabBarLabel: "COMPARE",
+        tabBarIcon: (
+          <Icon name="ios-desktop" style={{ color: "white", fontSize: 25 }} />
         )
       }
     },
