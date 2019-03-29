@@ -1,21 +1,23 @@
 import React, { Component } from "react";
 
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { connect } from "react-redux";
 import AlertAsync from "react-native-alert-async";
+import { extractMatchData } from "../util/DataParser";
 
 class QrCodeReader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: "SCAN"
+      text: "SCAN",
+      focusedScreen: false
     };
   }
 
   async onSuccess(e) {
-    if (e.data.length < 10) {
+    if (e.data.length < 30) {
       console.log("NO GOOD");
       this.scanner.reactivate();
       this.setState({ text: "bad" });
@@ -76,6 +78,7 @@ class QrCodeReader extends Component {
     }
 
     this.props.updateMatches(matches);
+    this.props.updateTeamMatches(extractMatchData(data))
   }
 
   rescanButtonPress() {
@@ -83,29 +86,54 @@ class QrCodeReader extends Component {
     this.setState({ text: "SCAN" });
   }
 
+  componentDidMount() {
+    const { navigation } = this.props;
+    navigation.addListener('willFocus', () =>
+      this.setState({ focusedScreen: true })
+    );
+    navigation.addListener('willBlur', () =>
+      this.setState({ focusedScreen: false })
+    );
+  }
+
+  cameraView() {
+    if(this.state.focusedScreen){
+      console.log("Rendering Camera")
+      return (
+        <QRCodeScanner
+          ref={node => {
+            this.scanner = node;
+          }}
+          onRead={this.onSuccess.bind(this)}
+          vibrate={false}
+          topContent={
+            <Text style={styles.centerText}>
+              Scan QR Code to read and load match data
+            </Text>
+          }
+          bottomContent={
+            <TouchableOpacity
+              style={styles.buttonTouchable}
+              onPress={() => this.rescanButtonPress()}
+            >
+              <Text style={styles.buttonText}>{this.state.text}</Text>
+            </TouchableOpacity>
+          }
+          showMarker={true}
+          captureAudio={false}
+        />
+      );
+    } else {
+      console.log("Waiting for camera")
+      return <View/>
+    }
+  }
+
   render() {
     return (
-      <QRCodeScanner
-        ref={node => {
-          this.scanner = node;
-        }}
-        onRead={this.onSuccess.bind(this)}
-        vibrate={false}
-        topContent={
-          <Text style={styles.centerText}>
-            Scan QR Code to read and load match data
-          </Text>
-        }
-        bottomContent={
-          <TouchableOpacity
-            style={styles.buttonTouchable}
-            onPress={() => this.rescanButtonPress()}
-          >
-            <Text style={styles.buttonText}>{this.state.text}</Text>
-          </TouchableOpacity>
-        }
-        showMarker={true}
-      />
+      <View style={{flex: 1}}>
+        {this.cameraView()}
+      </View>
     );
   }
 }

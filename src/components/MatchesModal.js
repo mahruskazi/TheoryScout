@@ -6,12 +6,12 @@ import Accordion from "react-native-collapsible/Accordion";
 import { Icon } from "react-native-elements";
 import constants from "../constants/DataInputConstants";
 
-class MatchesScreen extends Component {
+export default class MatchesModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       activeSections: [],
-      matches: this.props.matches
+      matches: props.navigation.state.params.matches
     };
   }
 
@@ -273,20 +273,9 @@ class MatchesScreen extends Component {
   };
 
   render() {
+    console.log(JSON.stringify(this.state.matches))
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.header_text}>Matches Screen</Text>
-          <View style={styles.qr_container}>
-            <Icon
-              iconStyle={styles.qr_icon}
-              name="md-qr-scanner"
-              type="ionicon"
-              color="white"
-              onPress={() => this.props.navigation.navigate('QrScanner')}
-            />
-          </View>
-        </View>
         <ScrollView style={{flex: 1}}>
           <Accordion
             sections={this.state.matches}
@@ -301,12 +290,3 @@ class MatchesScreen extends Component {
     );
   }
 }
-
-function mapStateToProps(state) {
-  return {
-    matches: state.matches.matches
-  };
-}
-
-//make this component available to the app
-export default connect(mapStateToProps)(MatchesScreen);

@@ -2,8 +2,8 @@ import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: 'white',
+        flex: 1,
     },
     header: {
         height: 50,
@@ -15,11 +15,9 @@ export default StyleSheet.create({
         color: "white",
         fontSize: 20
     },
-    title: {
-        fontSize: 20
-    },
-    image: {
-        height: 250,
-        width: 250
+    team_number: {
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
     }
 });

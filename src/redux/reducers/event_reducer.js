@@ -28,7 +28,11 @@ export default function (state=initialState, action) {
         }
         case 'FETCH_TEAMS_COMPLETE': {
             console.log("TEAMS FETCH SUCCESSFUL");
-            return {...state, fetching: false, fetched: true, teams: action.payload}
+            teams = action.payload;
+            teams.sort(function(a,b) {
+                return parseInt(a.team_number) - parseInt(b.team_number);
+            });
+            return {...state, fetching: false, fetched: true, teams}
         }
         case 'FETCH_MATCHES_COMPLETE': {
             console.log("MATCHES FETCH SUCCESSFUL");

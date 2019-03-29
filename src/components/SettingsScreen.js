@@ -1,12 +1,30 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, AsyncStorage } from "react-native";
-import { Icon, Overlay } from "react-native-elements";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  AsyncStorage
+} from "react-native";
+import { Icon } from "react-native-elements";
 import styles from "../styles/SettingsScreen.style";
 import EventPopup from "./SettingsPopups/EventPopup";
 import DeletePopup from "./SettingsPopups/DeletePopup";
 import OfflineNotice from "../util/OfflineNotice";
 import Toast from "react-native-easy-toast";
 import { connect } from "react-redux";
+import "babel-polyfill";
+import firebase from "firebase";
+import OtherDialog from "./SettingsPopups/OtherDialog";
+
+var config = {
+  databaseURL: "https://theory-scout.firebaseio.com",
+  projectId: "theory-scout"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(config);
+}
 
 class SettingsScreen extends Component {
   constructor(props) {
@@ -15,9 +33,15 @@ class SettingsScreen extends Component {
       event_name: this.props.events.selected_event.name,
       event_dialog: false,
       delete_dialog: false,
-      selected_event: null,
+      user_dialog: {
+        action: 0,
+        visible: false,
+        text: "Oops",
+        title: "Not Working"
+      },
+      selected_event: this.props.events.selected_event,
       isConnected: true,
-      leftRed: true,
+      leftRed: true
     };
   }
 
@@ -27,7 +51,7 @@ class SettingsScreen extends Component {
       return;
     }
     this.props.updateEvents().then(() => {
-      console.log("Show popup")
+      console.log("Show popup");
       this.setState({ event_dialog: true });
     });
   }
@@ -55,42 +79,46 @@ class SettingsScreen extends Component {
     this.props.deleteMatches();
   };
 
-  render_checkmark_top() {
-    if (this.state.leftRed) {
-      return (
-        <View style={{ position: "absolute" }}>
-          <Icon
-            name="md-checkmark-circle-outline"
-            type="ionicon"
-            color="#00cc44"
-            reverse
-          />
-        </View>
-      );
-    } else {
-      return null;
-    }
+  _userDialogPressed(title, text, action) {
+    this.setState({ user_dialog: { visible: true, title, text, action } });
   }
 
-  render_checkmark_bottom() {
-    if (!this.state.leftRed) {
-      return (
-        <View style={{ position: "absolute" }}>
-          <Icon
-            name="md-checkmark-circle-outline"
-            type="ionicon"
-            color="#00cc44"
-            reverse
-          />
-        </View>
-      );
-    } else {
-      return null;
-    }
-  }
+  _userDialogConfirmed = data => {
+    //console.log(JSON.stringify(this.props.teams));
+    if (this.state.selected_event != null && data.action == 1) {
+      if (this.props.events.selected_event.key != null) {
+        firebase
+          .database()
+          .ref(this.props.events.selected_event.key)
+          .update(this.props.teams)
+          .then(data => {
+            //success callback
+            console.log("Push complete");
+          })
+          .catch(error => {
+            //error callback
+            console.log("Error occured when pushing ", error);
+          });
+      }
+    } else if (this.state.selected_event != null && data.action == 0) {
+      if (this.props.events.selected_event.key != null) {
+        props = this.props
+        firebase.database().ref(props.events.selected_event.key).once('value', function (snapshot) {
+          //console.log(JSON.stringify(snapshot.val()))
+          if(snapshot.val() != null){
+            props.loadTeams(snapshot.val())
+          }
+        });
+      }
+    } 
+
+    this.setState({
+      user_dialog: { ...this.state.user_dialog, visible: false }
+    });
+  };
 
   orientationSettingChanged(state) {
-    this.setState({leftRed: state});
+    this.setState({ leftRed: state });
 
     this.props.setOrientation(state);
   }
@@ -121,51 +149,46 @@ class SettingsScreen extends Component {
               this.setState({ delete_dialog: true });
             }}
           >
-            <Text style={styles.event_text}>Click here to delete match data</Text>
+            <Text style={styles.event_text}>
+              Click here to delete match data
+            </Text>
             <Icon name="md-trash" type="ionicon" color="#e65c00" reverse />
           </TouchableOpacity>
 
-          <Text style={styles.heading_text}>Datainput Orientation</Text>
+          <Text style={styles.heading_text}>Pull from Database</Text>
           <TouchableOpacity
-            style={[styles.input_orientation, { marginTop: 10 }]}
-            onPress={() => this.orientationSettingChanged(true)}
+            style={styles.select_event_button}
+            onPress={() => {
+              this._userDialogPressed(
+                "Pull Data",
+                "Pulling data will overwrite everything locally, push first if you'd like to save",
+                0
+              );
+            }}
           >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                backgroundColor: "black"
-              }}
-            >
-              <View
-                style={{ backgroundColor: "#ff3333", flex: 1, opacity: this.state.leftRed ? 0.3 : 1 }}
-              />
-              <View
-                style={{ backgroundColor: "#4286f4", flex: 1, opacity: this.state.leftRed ? 0.3 : 1 }}
-              />
-            </View>
-            { this.render_checkmark_top() }
+            <Text style={styles.event_text}>Click here to PULL data</Text>
+            <Icon
+              name="md-cloud-download"
+              type="ionicon"
+              color="#e65c00"
+              reverse
+            />
           </TouchableOpacity>
 
+          <Text style={styles.heading_text}>Push to Database</Text>
           <TouchableOpacity
-            style={[styles.input_orientation, { marginTop: 10 }]}
-            onPress={() => this.orientationSettingChanged(false)}
+            style={styles.select_event_button}
+            onPress={() => {
+              this._userDialogPressed("Push Data", "Push data online", 1);
+            }}
           >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                backgroundColor: "black"
-              }}
-            >
-              <View
-                style={{ backgroundColor: "#4286f4", flex: 1, opacity: this.state.leftRed ? 1 : 0.3 }}
-              />
-              <View
-                style={{ backgroundColor: "#ff3333", flex: 1, opacity: this.state.leftRed ? 1 : 0.3 }}
-              />
-            </View>
-            { this.render_checkmark_bottom() }
+            <Text style={styles.event_text}>Click here to PUSH data</Text>
+            <Icon
+              name="md-cloud-upload"
+              type="ionicon"
+              color="#e65c00"
+              reverse
+            />
           </TouchableOpacity>
 
           <EventPopup
@@ -178,6 +201,19 @@ class SettingsScreen extends Component {
             visible={this.state.delete_dialog}
             cancelPressed={() => this.setState({ delete_dialog: false })}
             okPressed={this._deleteDialogConfirmed}
+          />
+
+          <OtherDialog
+            action={this.state.user_dialog.action}
+            title={this.state.user_dialog.title}
+            text={this.state.user_dialog.text}
+            visible={this.state.user_dialog.visible}
+            cancelPressed={() =>
+              this.setState({
+                user_dialog: false
+              })
+            }
+            okPressed={this._userDialogConfirmed}
           />
         </View>
         <Toast ref="toast" />
@@ -193,7 +229,8 @@ class SettingsScreen extends Component {
 
 function mapStateToProps(state) {
   return {
-    events: state.events
+    events: state.events,
+    teams: state.teams.teams
   };
 }
 

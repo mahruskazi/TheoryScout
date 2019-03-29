@@ -11,7 +11,7 @@ import {
   createSwitchNavigator,
   createAppContainer,
   createDrawerNavigator,
-  createBottomTabNavigator,
+  createMaterialTopTabNavigator,
   createStackNavigator,
   DrawerItems,
   SafeAreaView
@@ -26,6 +26,8 @@ import QrCodeGenerator from "./src/components/QrCodeGenerator";
 import TeamsList from "./src/components/TeamsList";
 import DataScreen from "./src/components/DataScreen";
 import QrCodeReader from "./src/redux/containers/QrCodeReader.container";
+import MatchesModal from './src/components/MatchesModal'
+import TeamCompare from "./src/components/TeamCompare";
 
 export default class App extends React.Component {
   constructor() {
@@ -115,20 +117,47 @@ export default class App extends React.Component {
 //   }
 // })
 
+const TeamPageStackNavigator = createMaterialTopTabNavigator(
+  {
+    Data: {
+      screen: DataScreen,
+      navigationOptions: {
+        tabBarLabel: "Summary",
+      }
+    },
+    Matches: {
+      screen: MatchesModal,
+      navigationOptions: {
+        tabBarLabel: "Matches",
+      }
+    }
+  }, {
+    tabBarOptions: {
+      style: {
+        backgroundColor: '#4e5387'
+      }
+    }
+  }
+);
+
 const DashboardTabNavigator = createMaterialBottomTabNavigator(
   {
     Teams: {
       screen: TeamsList,
       navigationOptions: {
         tabBarLabel: "TEAMS",
-        tabBarIcon: <Icon name="list" style={{ color: "white", fontSize: 25 }} />
+        tabBarIcon: (
+          <Icon name="list" style={{ color: "white", fontSize: 25 }} />
+        )
       }
     },
-    Data: {
-      screen: DataScreen,
+    Summary: {
+      screen: TeamCompare,
       navigationOptions: {
-        tabBarLabel: "DATA",
-        tabBarIcon: <Icon name="ios-desktop" style={{ color: "white", fontSize: 25 }} />
+        tabBarLabel: "COMPARE",
+        tabBarIcon: (
+          <Icon name="ios-desktop" style={{ color: "white", fontSize: 25 }} />
+        )
       }
     },
     Matches: {
@@ -157,10 +186,30 @@ const DashboardStackNavigator = createStackNavigator(
       }
     },
     QrScreen: {
-      screen: QrCodeGenerator
+      screen: QrCodeGenerator,
+      navigationOptions: {
+        title: 'QR Code',
+        headerTintColor: 'white',
+        headerStyle: {
+          backgroundColor: '#292F6D',
+        },
+        headerTitleStyle: {
+          color: 'white'
+        },
+      }
     },
-    QrScanner: {
-      screen: QrCodeReader
+    TeamPage: {
+      screen: TeamPageStackNavigator,
+      navigationOptions: {
+        title: 'Team Data',
+        headerTintColor: 'white',
+        headerStyle: {
+          backgroundColor: '#292F6D',
+        },
+        headerTitleStyle: {
+          color: 'white'
+        },
+      }
     }
   },
   {
@@ -200,6 +249,9 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     Settings: {
       screen: SettingsScreen
+    },
+    Scan: {
+      screen: QrCodeReader
     }
   },
   {
