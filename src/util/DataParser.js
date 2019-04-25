@@ -393,6 +393,7 @@ function extractTeamSummary(data) {
             data[match].auto.cargo_ship.cargo.scored
           );
         }
+        //console.log("HATCH ACCURACY: " + data[match].auto.cargo_ship.hatch.accuracy)
         if (data[match].auto.cargo_ship.hatch.accuracy != -1) {
           obj.auto.cargo_ship.accuracy_hatch.push(
             data[match].auto.cargo_ship.hatch.accuracy
@@ -586,6 +587,7 @@ export function getTeamSummary(data) {
       .level_2_success + summary.auto.level_2_missed}`;
 
     if (summary.auto.cargo_ship.accuracy_hatch.length > 0) {
+      //console.log("HATCHES: " + JSON.stringify(summary.auto.cargo_ship.accuracy_hatch))
       last_three = summary.auto.cargo_ship.accuracy_hatch.slice(
         Math.max(summary.auto.cargo_ship.accuracy_hatch.length - 3, 0)
       );
@@ -616,10 +618,10 @@ export function getTeamSummary(data) {
     // TELE
 
     output.tele.total_hatch_average =
-      summary.tele.total_hatch_scored / Object.keys(data).length;
+      (summary.tele.total_hatch_scored / Object.keys(data).length).toFixed(2);
 
     output.tele.total_cargo_average =
-      summary.tele.total_cargo_scored / Object.keys(data).length;
+      (summary.tele.total_cargo_scored / Object.keys(data).length).toFixed(2);
 
     if (summary.tele.cargo_ship.hatch_scored.length > 0) {
       last_three = summary.tele.cargo_ship.hatch_scored.slice(
@@ -713,14 +715,14 @@ export function getComparisonData(event_data, teams) {
 
     if (team != null) {
       sum = getSumOfArray(team_data.auto.cargo_ship.hatch_scored);
-      output.auto.cargo_ship.hatch_average.push(sum / Object.keys(team).length);
+      output.auto.cargo_ship.hatch_average.push((sum / Object.keys(team).length).toFixed(2));
     } else {
       output.auto.cargo_ship.hatch_average.push("N/A");
     }
 
     if (team != null) {
       sum = getSumOfArray(team_data.auto.cargo_ship.cargo_scored);
-      output.auto.cargo_ship.cargo_average.push(sum / Object.keys(team).length);
+      output.auto.cargo_ship.cargo_average.push((sum / Object.keys(team).length).toFixed(2));
     } else {
       output.auto.cargo_ship.cargo_average.push("N/A");
     }
@@ -732,9 +734,9 @@ export function getComparisonData(event_data, teams) {
         mid: 0,
         high: 0
       };
-      avg.low = obj.low / Object.keys(team).length;
-      avg.mid = obj.mid / Object.keys(team).length;
-      avg.high = obj.high / Object.keys(team).length;
+      avg.low = obj.low == 0 ? 0 : (obj.low / Object.keys(team).length).toFixed(2);
+      avg.mid = obj.mid == 0 ? 0 : (obj.mid / Object.keys(team).length).toFixed(2);
+      avg.high = obj.high == 0 ? 0 : (obj.high / Object.keys(team).length).toFixed(2);
       text = `${avg.low}/${avg.mid}/${avg.high}`;
       output.auto.rocket_ship.hatch_average.push(text);
     } else {
@@ -748,9 +750,9 @@ export function getComparisonData(event_data, teams) {
         mid: 0,
         high: 0
       };
-      avg.low = obj.low / Object.keys(team).length;
-      avg.mid = obj.mid / Object.keys(team).length;
-      avg.high = obj.high / Object.keys(team).length;
+      avg.low = obj.low == 0 ? 0 : (obj.low / Object.keys(team).length).toFixed(2);
+      avg.mid = obj.mid == 0 ? 0 : (obj.mid / Object.keys(team).length).toFixed(2);
+      avg.high = obj.high == 0 ? 0 : (obj.high / Object.keys(team).length).toFixed(2);
       text = `${avg.low}/${avg.mid}/${avg.high}`;
       output.auto.rocket_ship.cargo_average.push(text);
     } else {
@@ -765,28 +767,28 @@ export function getComparisonData(event_data, teams) {
 
     if (team != null) {
       output.tele.total_hatch_average.push(
-        team_data.tele.total_hatch_scored / Object.keys(team).length);
+        (team_data.tele.total_hatch_scored / Object.keys(team).length).toFixed(2));
     } else {
       output.tele.total_hatch_average.push("N/A");
     }
 
     if (team != null) {
       output.tele.total_cargo_average.push(
-        team_data.tele.total_cargo_scored / Object.keys(team).length);
+        (team_data.tele.total_cargo_scored / Object.keys(team).length).toFixed(2));
     } else {
       output.tele.total_cargo_average.push("N/A");
     }
 
     if (team != null) {
       sum = getSumOfArray(team_data.tele.cargo_ship.hatch_scored);
-      output.tele.cargo_ship.hatch_average.push(sum / Object.keys(team).length);
+      output.tele.cargo_ship.hatch_average.push((sum / Object.keys(team).length).toFixed(2));
     } else {
       output.tele.cargo_ship.hatch_average.push("N/A");
     }
 
     if (team != null) {
       sum = getSumOfArray(team_data.tele.cargo_ship.cargo_scored);
-      output.tele.cargo_ship.cargo_average.push(sum / Object.keys(team).length);
+      output.tele.cargo_ship.cargo_average.push((sum / Object.keys(team).length).toFixed(2));
     } else {
       output.tele.cargo_ship.cargo_average.push("N/A");
     }
@@ -798,9 +800,9 @@ export function getComparisonData(event_data, teams) {
         mid: 0,
         high: 0
       };
-      avg.low = obj.low / Object.keys(team).length;
-      avg.mid = obj.mid / Object.keys(team).length;
-      avg.high = obj.high / Object.keys(team).length;
+      avg.low = obj.low == 0 ? 0 : (obj.low / Object.keys(team).length).toFixed(2);
+      avg.mid = obj.mid == 0 ? 0 : (obj.mid / Object.keys(team).length).toFixed(2);
+      avg.high = obj.high == 0 ? 0 : (obj.high / Object.keys(team).length).toFixed(2);
       text = `${avg.low}/${avg.mid}/${avg.high}`;
       output.tele.rocket_ship.hatch_average.push(text);
     } else {
@@ -814,9 +816,9 @@ export function getComparisonData(event_data, teams) {
         mid: 0,
         high: 0
       };
-      avg.low = obj.low / Object.keys(team).length;
-      avg.mid = obj.mid / Object.keys(team).length;
-      avg.high = obj.high / Object.keys(team).length;
+      avg.low = obj.low == 0 ? 0 : (obj.low / Object.keys(team).length).toFixed(2);
+      avg.mid = obj.mid == 0 ? 0 : (obj.mid / Object.keys(team).length).toFixed(2);
+      avg.high = obj.high == 0 ? 0 : (obj.high / Object.keys(team).length).toFixed(2);
       text = `${avg.low}/${avg.mid}/${avg.high}`;
       output.tele.rocket_ship.cargo_average.push(text);
     } else {
@@ -829,7 +831,7 @@ export function getComparisonData(event_data, teams) {
   //   output.auto.cargo_ship.hatch_average(sum / Object.keys())
   // }
 
-  console.log(JSON.stringify(output));
+  //console.log(JSON.stringify(output));
 
   return output;
 }
